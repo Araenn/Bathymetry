@@ -1,4 +1,5 @@
-clear;
+clc; clear; close all
+
 ncdisp('bathy.nc') %show informations contained in your file
 
 %read from the .nc file
@@ -7,17 +8,17 @@ Lat = ncread('bathy.nc', 'nav_lat'); %latitude
 B = ncread('bathy.nc', 'Bathymetry'); %depth
 
 %create map matrix
-col3 = (0:0.0001:1)'; %blue row color 
-col12 = zeros(numel(col3), 2); %create the first 2 rows composed of zeros, in order to create a RGB matrix
-t = [1 1 1]; %in order to color the land in white
-map = [col12,col3;t]; %create the RGB matrix as [0 0 0; 0 0 0.0001; ... ; 1 1 1] 
+tone = [0 0.3 1]; % Single color as [r g b] triple
+saturation = [0:0.0001:1]'; % Vector of saturation ratios
+rgb = tone .* saturation; % You'll also need a repmat in older versions of Matlab
+map = [rgb; 1 1 1]; % Add a special white color for the max value
 
 %plot the data
 colormap(map) %set the colors
 pcolor(Lon, Lat, -B); %plot the colors of Depth in function of longitude and latitude. As Depth is decreasing, don't forget the "-"
-title('Bathymetric data of the French Mediterranean')
+title('Bathymetric data of the Mediterranean')
 xlabel('Longitude')
 ylabel('Latitude')
-shading flat; %without, all the datas cannot be plotted correctly (it will give you a black square)
+shading interp; %without, all the datas cannot be plotted correctly (it will give you a black square)
 colorbar %add the "legend" for the depth
 ylabel(colorbar, 'Depth')
